@@ -12,8 +12,11 @@ app.use(express.json());
 
 app.get('/', async (req, res) => {
   try {
-    const { pageNo = 1, itemsPerPage = 2 } = req.params;
-    const result = await db.query('SELECT * FROM recipe ORDER BY timestamp DESC LIMIT $1 OFFSET $2', [itemsPerPage, (pageNo - 1) * itemsPerPage]);
+    const { pageNo = 2, itemsPerPage = 3 } = req.query;
+    console.log("pageNo", pageNo);
+    console.log("itemsPerPage", itemsPerPage);
+    const result = await db.query('SELECT * FROM recipe LEFT JOIN author ON recipe.author_id = CAST(author.id AS varchar) ORDER BY timestamp DESC LIMIT $1 OFFSET $2', [itemsPerPage, (pageNo - 1) * itemsPerPage]);
+    // const result = await db.query('SELECT * from author');
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
